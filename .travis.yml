@@ -1,6 +1,10 @@
 dist: xenial
 language: python
 cache: pip
+os:
+  - linux
+  - osx
+  - windows
 
 stages:
   - name: static analysis
@@ -11,19 +15,23 @@ stages:
 jobs:
   include:
     - stage: static analysis
+      os: linux
       env: TOXENV=flake8
 
     - stage: test
+      os: linux
       env: TOXENV=pypy
       python: pypy2.7-6.0
 
     - stage: test
+      os: linux
       env: TOXENV=pypy3
       python: pypy3.5-6.0
 
     - stage: test
-      env: TOXENV=py27
+      os: linux
       dist: trusty
+      env: TOXENV=py27
       python: "2.7.3"
 
     - stage: test
@@ -47,6 +55,7 @@ jobs:
       python: "3.7"
 
     - stage: deploy to PyPI
+      os: linux
       install: true
       script: skip
       after_success: true
