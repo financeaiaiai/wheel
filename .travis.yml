@@ -2,10 +2,6 @@ dist: xenial
 language: python
 cache: pip
 
-os:
-  - linux
-  - osx
-  - windows
 python:
   - "2.7"
   - "3.5"
@@ -34,6 +30,34 @@ jobs:
       python: pypy3.5-6.0
       env: PYTEST_ADDOPTS="--no-cov"
       after_success: skip
+
+    - os: osx
+      language: sh
+      python: "3.7"
+      before_install:
+        - brew update
+        - brew upgrade python3
+        - python3 -m pip install virtualenv
+        - virtualenv venv -p python3
+        - source venv/bin/activate
+      env: HOMEBREW_NO_INSTALL_CLEANUP=1
+
+    - &windows
+      stage: test
+      os: windows
+      language: sh
+      python: "2.7"
+      before_install:
+        - choco install python2
+        - export PATH="/c/Python27:/c/Python27/Scripts:$PATH"
+        - python -m pip install --upgrade pip
+
+    - <<: *windows
+      python: "3.7"
+      before_install:
+        - choco install python3
+        - export PATH="/c/Python37:/c/Python37/Scripts:$PATH"
+        - python -m pip install --upgrade pip
 
     - stage: test
       dist: trusty
