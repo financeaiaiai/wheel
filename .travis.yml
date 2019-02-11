@@ -1,11 +1,16 @@
 dist: xenial
 language: python
 cache: pip
-#
+
 os:
   - linux
   - osx
   - windows
+python:
+  - "2.7"
+  - "3.5"
+  - "3.6"
+  - "3.7"
 
 stages:
   - name: static analysis
@@ -16,50 +21,29 @@ stages:
 jobs:
   include:
     - stage: static analysis
-      os: linux
-      env: TOXENV=flake8
+      install: pip install flake8
+      script: flake8 wheel tests
+      after_success: skip
 
     - stage: test
-      os: linux
-      env: TOXENV=pypy
       python: pypy2.7-6.0
+      env: PYTEST_ADDOPTS="--no-cov"
+      after_success: skip
 
     - stage: test
-      os: linux
-      env: TOXENV=pypy3
       python: pypy3.5-6.0
+      env: PYTEST_ADDOPTS="--no-cov"
+      after_success: skip
 
     - stage: test
-      os: linux
       dist: trusty
-      env: TOXENV=py27
       python: "2.7.3"
-
-    - stage: test
-      env: TOXENV=py27
-      python: "2.7"
-
-    - stage: test
-      env: TOXENV=py34
-      python: "3.4"
-
-    - stage: test
-      env: TOXENV=py35
-      python: "3.5"
-
-    - stage: test
-      env: TOXENV=py36
-      python: "3.6"
-
-    - stage: test
-      env: TOXENV=py37
-      python: "3.7"
+      after_success: skip
 
     - stage: deploy to PyPI
-      os: linux
       install: true
       script: skip
-      after_success: true
+      after_success: skip
       deploy:
         provider: pypi
         user: agronholm
@@ -70,9 +54,9 @@ jobs:
           tags: true
           repo: pypa/wheel
 
-install: pip install tox
+install: pip install -e .[test]
 
-script: tox
+script: pytest
 
 after_success:
   - pip install codecov
