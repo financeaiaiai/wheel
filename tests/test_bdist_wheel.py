@@ -49,7 +49,7 @@ def test_unicode_record(wheel_paths):
     with ZipFile(path) as zf:
         record = zf.read('unicode.dist-0.1.dist-info/RECORD')
 
-    assert u'åäö_日本語.py'.encode('utf-8') in record
+    assert u'åäö_日本語.py' in record.decode('utf-8')
 
 
 def test_licenses_default(dummy_dist, monkeypatch, tmpdir):
